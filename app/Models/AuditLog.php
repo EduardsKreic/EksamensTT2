@@ -4,27 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Trainer extends Model
+class AuditLog extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'name',
-        'specialization',
+        'action',
+        'model_type',
+        'model_id',
         'description',
-        'image_path',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function classSessions()
-    {
-        return $this->hasMany(ClassSession::class);
     }
 }

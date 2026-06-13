@@ -12,9 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('schedules', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        $table->date('class_date');
+        $table->time('start_time');
+        $table->time('end_time');
+        $table->string('place');
+        $table->unsignedInteger('available_places');
+        $table->timestamps();
+});
     }
 
     /**

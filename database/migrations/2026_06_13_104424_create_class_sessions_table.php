@@ -12,9 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('class_sessions', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->foreignId('trainer_id')->constrained()->cascadeOnDelete();
+        $table->foreignId('category_id')->constrained()->cascadeOnDelete();
+        $table->foreignId('schedule_id')->constrained()->cascadeOnDelete();
+        $table->timestamps();
+});
     }
 
     /**

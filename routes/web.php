@@ -9,8 +9,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScheduleController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('home');
+})->name('home');
 
 Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/classes/{id}', [ClassController::class, 'show']);

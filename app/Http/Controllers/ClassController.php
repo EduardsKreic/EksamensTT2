@@ -33,11 +33,15 @@ public function index(Request $request)
         });
     }
 
-    $classes = $query->get();
-    $categories = Category::all();
-    $trainers = Trainer::all();
+        $classes = $query->get();
+        $categories = Category::all();
+        $trainers = Trainer::all();
 
-    return view('classes.index', compact('classes', 'categories', 'trainers'));
+        if ($request->ajax()) {
+            return view('classes.partials.list', compact('classes'))->render();
+}
+
+return view('classes.index', compact('classes', 'categories', 'trainers'));
 }
 
  public function show($id)

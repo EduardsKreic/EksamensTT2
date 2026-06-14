@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
             date: date.value,
         });
 
-        fetch('/classes/filter?' + params.toString(), {
+        fetch('/classes?' + params.toString(), {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'text/html'

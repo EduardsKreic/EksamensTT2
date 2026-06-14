@@ -8,65 +8,75 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
-    public function index()
-    {
-        return Booking::with([
-            'user',
-            'classSession.trainer',
-            'classSession.category',
-            'classSession.schedule',
-        ])->get();
+   public function index()
+{
+    $bookings = Booking::with([
+        'user',
+        'classSession.trainer',
+        'classSession.category',
+        'classSession.schedule',
+    ])
+    ->where('user_id', auth()->id())
+    ->latest()
+    ->get();
+
+    return view('bookings.index', compact('bookings'));
+}
+
+   public function store(Request $request)
+{
+    $request->validate([
+        'class_session_id' => 'required|exists:class_sessions,id',
+    ]);
+
+    $classSession = ClassSession::with('schedule')
+        ->findOrFail($request->class_session_id);
+
+   $existingBooking = Booking::where('user_id', auth()->id())
+    ->where('class_session_id', $request->class_session_id)
+    ->first();
+
+if ($existingBooking && $existingBooking->status === 'active') {
+    return redirect()->back()->with('error', 'You already booked this class.');
+}
+
+if ($existingBooking && $existingBooking->status === 'cancelled') {
+    if (!$classSession->schedule || $classSession->schedule->available_places <= 0) {
+        return redirect()->back()->with('error', 'No available places.');
     }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'class_session_id' => 'required|exists:class_sessions,id',
-        ]);
+    $existingBooking->update([
+        'status' => 'active',
+    ]);
 
-        $classSession = ClassSession::with('schedule')
-            ->findOrFail($request->class_session_id);
+    $classSession->schedule->decrement('available_places');
 
-        $existingBooking = Booking::where('user_id', $request->user_id)
-            ->where('class_session_id', $request->class_session_id)
-            ->where('status', 'active')
-            ->first();
+    return redirect()->route('bookings.index')
+        ->with('success', 'Booking created successfully.');
+}
 
-        if ($existingBooking) {
-            return response()->json([
-                'message' => 'User already has an active booking for this class.',
-            ], 400);
-        }
-
-        if ($classSession->schedule->available_places <= 0) {
-            return response()->json([
-                'message' => 'No available places for this class.',
-            ], 400);
-        }
-
-        $booking = Booking::create([
-            'user_id' => $request->user_id,
-            'class_session_id' => $request->class_session_id,
-            'status' => 'active',
-        ]);
-
-        $classSession->schedule->decrement('available_places');
-
-        return response()->json([
-            'message' => 'Booking created successfully.',
-            'booking' => $booking,
-        ], 201);
+    if (!$classSession->schedule || $classSession->schedule->available_places <= 0) {
+        return redirect()->back()->with('error', 'No available places.');
     }
+
+    Booking::create([
+        'user_id' => auth()->id(),
+        'class_session_id' => $request->class_session_id,
+        'status' => 'active',
+    ]);
+
+    $classSession->schedule->decrement('available_places');
+
+    return redirect()->route('bookings.index')->with('success', 'Booking created successfully.');
+}
 
     public function destroy($id)
     {
         $booking = Booking::with('classSession.schedule')->findOrFail($id);
 
         if ($booking->status === 'cancelled') {
-            return response()->json([
-                'message' => 'Booking is already cancelled.',
-            ], 400);
+        return redirect()->route('bookings.index')
+    ->with('error', 'Booking is already cancelled.');
         }
 
         $booking->update([
@@ -75,8 +85,7 @@ class BookingController extends Controller
 
         $booking->classSession->schedule->increment('available_places');
 
-        return response()->json([
-            'message' => 'Booking cancelled successfully.',
-        ]);
+       return redirect()->route('bookings.index')
+    ->with('success', 'Booking cancelled successfully.');
     }
 }

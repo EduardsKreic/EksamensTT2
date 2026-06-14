@@ -13,25 +13,43 @@
             <th>{{ __('messages.actions') }}</th>
         </tr>
     </thead>
+
     <tbody>
         @forelse($bookings as $booking)
             <tr>
                 <td>{{ $booking->classSession->title ?? '-' }}</td>
-                <td>{{ optional($booking->classSession->schedule)->class_date?->format('d.m.Y') }}</td>
-                <td>{{ optional($booking->classSession->schedule)->start_time }} - {{ optional($booking->classSession->schedule)->end_time }}</td>
+
+                <td>
+                    {{ optional($booking->classSession->schedule)->class_date ?? '-' }}
+                </td>
+
+                <td>
+                    {{ optional($booking->classSession->schedule)->start_time ?? '-' }}
+                    -
+                    {{ optional($booking->classSession->schedule)->end_time ?? '-' }}
+                </td>
+
                 <td>{{ $booking->status }}</td>
+
                 <td>
                     @if($booking->status === 'active')
-                        <form action="{{ route('bookings.cancel', $booking) }}" method="POST">
+                        <form action="{{ route('bookings.destroy', $booking->id) }}" method="POST">
                             @csrf
-                            @method('PATCH')
-                            <button class="btn btn-danger" type="submit">{{ __('messages.cancel') }}</button>
+                            @method('DELETE')
+
+                            <button class="btn btn-danger" type="submit">
+                                {{ __('messages.cancel') }}
+                            </button>
                         </form>
                     @endif
                 </td>
             </tr>
         @empty
-            <tr><td colspan="5">{{ __('messages.no_bookings') }}</td></tr>
+            <tr>
+                <td colspan="5">
+                    {{ __('messages.no_bookings') }}
+                </td>
+            </tr>
         @endforelse
     </tbody>
 </table>

@@ -35,4 +35,5 @@ return [
     'audit_logs' => 'Auditācijas žurnāls',
     'audit_logs_text' => 'Sistēmā tiek saglabātas būtiskas lietotāju un administratoru darbības.',
     'open' => 'Atvērt',
+    'profile' => 'Profils',
 ];

@@ -9,37 +9,49 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use App\Models\ClassSession;
+use App\Models\Trainer;
+use App\Models\Booking;
 
 Route::get('/locale/{locale}', function ($locale) {
     if (in_array($locale, ['lv', 'en'])) {
-        Session::put('locale', $locale);
-        App::setLocale($locale);
+        session(['locale' => $locale]);
     }
 
-   return redirect()->back();
+    return redirect()->back();
 })->name('locale.switch');
 
 Route::get('/', function () {
-    return view('home');
+    return view('home', [
+        'classesCount' => ClassSession::count(),
+        'trainersCount' => Trainer::count(),
+        'bookingsCount' => Booking::count(),
+    ]);
 })->name('home');
 
 Route::get('/classes', [ClassController::class, 'index'])->name('classes.index');
 Route::get('/classes/{id}', [ClassController::class, 'show'])->name('classes.show');
 
 Route::get('/trainers', [TrainerController::class, 'index'])->name('trainers.index');
-Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
 
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/profile', [UserController::class, 'profile']);
-    Route::patch('/profile', [UserController::class, 'updateProfile']);
+    Route::get('/profile', [UserController::class, 'profile'])
+        ->name('profile');
 
-    Route::get('/bookings', [BookingController::class, 'index']);
-    Route::post('/bookings', [BookingController::class, 'store']);
-    Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+    Route::patch('/profile', [UserController::class, 'updateProfile'])
+        ->name('profile.update');
+
+    Route::get('/bookings', [BookingController::class, 'index'])
+        ->name('bookings.index');
+
+    Route::post('/bookings', [BookingController::class, 'store'])
+        ->name('bookings.store');
+
+    Route::delete('/bookings/{id}', [BookingController::class, 'destroy'])
+        ->name('bookings.destroy');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

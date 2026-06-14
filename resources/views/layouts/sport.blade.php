@@ -175,25 +175,121 @@
             gap: 12px;
         }
     }
+    .hero {
+    background: linear-gradient(135deg, #0f172a, #2563eb);
+    color: white;
+    padding: 70px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+
+.hero h1 {
+    color: white;
+    font-size: 52px;
+    margin-bottom: 16px;
+}
+
+.hero p {
+    font-size: 20px;
+    max-width: 700px;
+    opacity: .95;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    padding: 8px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.hero-actions {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+}
+
+.stat-card h2 {
+    font-size: 42px;
+    color: var(--blue);
+    margin: 0;
+}
+
+.stat-card p {
+    margin-top: 10px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.card {
+    transition: all .3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 28px rgba(0,0,0,.15);
+}
+
+.btn {
+    transition: all .3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+    .hero {
+        padding: 40px 24px;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
 </head>
 <body>
 <header>
     <div><strong>Sport Club</strong></div>
-    <nav>
-        <a href="{{ route('home') }}">{{ __('messages.home') }}</a>
-        <a href="{{ route('classes.index') }}">{{ __('messages.classes') }}</a>
-        <a href="{{ route('trainers.index') }}">{{ __('messages.trainers') }}</a>
-        @auth
-            <a href="{{ route('bookings.index') }}">{{ __('messages.my_bookings') }}</a>
-            <a href="{{ route('dashboard') }}">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
-            <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
-        @endauth
-        <a href="{{ route('locale.switch', 'lv') }}">LV</a>
-        <a href="{{ route('locale.switch', 'en') }}">EN</a>
-    </nav>
+<nav>
+    <a href="{{ route('home') }}">{{ __('messages.home') }}</a>
+    <a href="{{ route('classes.index') }}">{{ __('messages.classes') }}</a>
+    <a href="{{ route('trainers.index') }}">{{ __('messages.trainers') }}</a>
+
+    @auth
+        <a href="{{ route('bookings.index') }}">{{ __('messages.my_bookings') }}</a>
+     <a href="{{ route('profile') }}">{{ __('messages.profile') }}</a>
+    @else
+        <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
+        <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
+    @endauth
+
+        <a href="{{ url('/locale/lv') }}">LV</a>
+        <a href="{{ url('/locale/en') }}">EN</a>
+</nav>
 </header>
 <main>
     @if(session('success'))
@@ -204,6 +300,6 @@
     @endif
     @yield('content')
 </main>
-@yield('scripts')
+@stack('scripts')
 </body>
 </html>

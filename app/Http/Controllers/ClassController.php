@@ -44,16 +44,16 @@ public function index(Request $request)
 return view('classes.index', compact('classes', 'categories', 'trainers'));
 }
 
- public function show($id)
+public function show($id)
 {
-    $classSession = ClassSession::with([
+    $class = ClassSession::with([
         'trainer',
         'category',
         'schedule',
         'bookings.user',
     ])->findOrFail($id);
 
-    return view('classes.show', compact('classSession'));
+    return view('classes.show', compact('class'));
 }
 
     public function create()

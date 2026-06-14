@@ -35,4 +35,5 @@ return [
     'audit_logs' => 'Audit logs',
     'audit_logs_text' => 'Important user and administrator actions are stored in the system.',
     'open' => 'Open',
+    'profile' => 'Profile',
 ];

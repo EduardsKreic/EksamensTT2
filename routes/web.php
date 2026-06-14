@@ -14,15 +14,17 @@ Route::get('/', function () {
 
 Route::get('/classes', [ClassController::class, 'index']);
 Route::get('/classes/{id}', [ClassController::class, 'show']);
-
 Route::get('/trainers', [TrainerController::class, 'index']);
 
-Route::get('/bookings', [BookingController::class, 'index']);
-Route::post('/bookings', [BookingController::class, 'store']);
-Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [UserController::class, 'profile']);
 
-Route::get('/profile', [UserController::class, 'profile']);
+    Route::get('/bookings', [BookingController::class, 'index']);
+    Route::post('/bookings', [BookingController::class, 'store']);
+    Route::delete('/bookings/{id}', [BookingController::class, 'destroy']);
+});
 
-Route::get('/admin', [AdminController::class, 'dashboard']);
-
-Route::resource('schedules', ScheduleController::class);
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'dashboard']);
+    Route::resource('schedules', ScheduleController::class);
+});

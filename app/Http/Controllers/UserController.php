@@ -6,17 +6,27 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function profile()
+    public function profile(Request $request)
     {
         return response()->json([
-            'message' => 'User profile'
+            'user' => $request->user()->load('role'),
         ]);
     }
 
-    public function updateProfile()
+    public function updateProfile(Request $request)
     {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'email' => 'sometimes|required|email',
+        ]);
+
+        $user->update($validated);
+
         return response()->json([
-            'message' => 'Profile updated'
+            'message' => 'Profile updated successfully.',
+            'user' => $user->fresh(),
         ]);
     }
 }

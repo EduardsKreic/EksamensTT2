@@ -74,13 +74,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $trainer2 = Trainer::create([
-            'name' => 'John Smith',
+            'name' => 'Thank you claviclear',
             'specialization' => 'Fitness',
             'description' => 'Strength and conditioning coach.',
         ]);
 
         $trainer3 = Trainer::create([
-            'name' => 'Mark Johnson',
+            'name' => 'Theodore rosevelt',
             'specialization' => 'Boxing',
             'description' => 'Professional boxing coach.',
         ]);

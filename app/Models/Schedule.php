@@ -4,22 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Schedule extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'class_date',
         'start_time',
         'end_time',
-        'hall',
-        'max_participants',
-    ];
-
-    protected $casts = [
-        'class_date' => 'date',
+        'place',
+        'available_places',
     ];
 
     public function classSessions()

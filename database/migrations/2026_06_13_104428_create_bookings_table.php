@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        $table->foreignId('class_session_id')->constrained()->cascadeOnDelete();
+        $table->enum('status', ['active', 'cancelled'])->default('active');
+        $table->timestamps();
+        $table->unique(['user_id', 'class_session_id']);
+});
     }
 
     /**

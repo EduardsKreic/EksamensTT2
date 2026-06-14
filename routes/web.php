@@ -7,17 +7,28 @@ use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScheduleController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
+
+Route::get('/locale/{locale}', function ($locale) {
+    if (in_array($locale, ['lv', 'en'])) {
+        Session::put('locale', $locale);
+        App::setLocale($locale);
+    }
+
+   return redirect()->back();
+})->name('locale.switch');
 
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
-Route::get('/classes', [ClassController::class, 'index']);
-Route::get('/classes/{id}', [ClassController::class, 'show']);
-Route::get('/trainers', [TrainerController::class, 'index']);
-Route::get('/trainers/{id}', [TrainerController::class, 'show']);
-Route::get('/trainers/{id}/classes', [TrainerController::class, 'classes']);
-Route::get('/classes/{id}/participants', [TrainerController::class, 'participants']);
+Route::get('/classes', [ClassController::class, 'index'])->name('classes.index');
+Route::get('/classes/{id}', [ClassController::class, 'show'])->name('classes.show');
+
+Route::get('/trainers', [TrainerController::class, 'index'])->name('trainers.index');
+Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
 
 
 

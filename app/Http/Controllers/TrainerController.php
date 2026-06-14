@@ -9,26 +9,22 @@ use Illuminate\Http\Request;
 
 class TrainerController extends Controller
 {
-    public function index()
-    {
-        return response()->json([
-            'message' => 'Trainer list',
-            'trainers' => Trainer::all(),
-        ]);
-    }
+   public function index()
+{
+    $trainers = Trainer::all();
 
-    public function show($id)
-    {
-        $trainer = Trainer::with([
-            'classSessions.category',
-            'classSessions.schedule',
-        ])->findOrFail($id);
+    return view('trainers.index', compact('trainers'));
+}
 
-        return response()->json([
-            'message' => 'Trainer details',
-            'trainer' => $trainer,
-        ]);
-    }
+   public function show($id)
+{
+    $trainer = Trainer::with([
+        'classSessions.category',
+        'classSessions.schedule',
+    ])->findOrFail($id);
+
+    return view('trainers.show', compact('trainer'));
+}
 
     public function classes($trainerId)
     {

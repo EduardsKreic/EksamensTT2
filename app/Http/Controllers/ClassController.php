@@ -10,48 +10,47 @@ use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = ClassSession::with([
-            'trainer',
-            'category',
-            'schedule',
-        ]);
 
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
+public function index(Request $request)
+{
+    $query = ClassSession::with([
+        'trainer',
+        'category',
+        'schedule',
+    ]);
 
-        if ($request->filled('trainer_id')) {
-            $query->where('trainer_id', $request->trainer_id);
-        }
-
-        if ($request->filled('date')) {
-            $query->whereHas('schedule', function ($scheduleQuery) use ($request) {
-                $scheduleQuery->where('class_date', $request->date);
-            });
-        }
-
-        return response()->json([
-            'message' => 'Class list',
-            'classes' => $query->get(),
-        ]);
+    if ($request->filled('category_id')) {
+        $query->where('category_id', $request->category_id);
     }
 
-    public function show($id)
-    {
-        $classSession = ClassSession::with([
-            'trainer',
-            'category',
-            'schedule',
-            'bookings.user',
-        ])->findOrFail($id);
-
-        return response()->json([
-            'message' => 'Class details',
-            'class' => $classSession,
-        ]);
+    if ($request->filled('trainer_id')) {
+        $query->where('trainer_id', $request->trainer_id);
     }
+
+    if ($request->filled('date')) {
+        $query->whereHas('schedule', function ($scheduleQuery) use ($request) {
+            $scheduleQuery->where('class_date', $request->date);
+        });
+    }
+
+    $classes = $query->get();
+    $categories = Category::all();
+    $trainers = Trainer::all();
+
+    return view('classes.index', compact('classes', 'categories', 'trainers'));
+}
+
+ public function show($id)
+{
+    $classSession = ClassSession::with([
+        'trainer',
+        'category',
+        'schedule',
+        'bookings.user',
+    ])->findOrFail($id);
+
+    return view('classes.show', compact('classSession'));
+}
 
     public function create()
     {

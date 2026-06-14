@@ -269,6 +269,20 @@
         grid-template-columns: 1fr;
     }
 }
+
+.nav-button {
+    background: none;
+    border: 0;
+    color: white;
+    margin-left: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.nav-button:hover {
+    color: #93c5fd;
+}
 </style>
 </head>
 <body>
@@ -280,9 +294,16 @@
     <a href="{{ route('trainers.index') }}">{{ __('messages.trainers') }}</a>
 
     @auth
-        <a href="{{ route('bookings.index') }}">{{ __('messages.my_bookings') }}</a>
-     <a href="{{ route('profile') }}">{{ __('messages.profile') }}</a>
-    @else
+    <a href="{{ route('bookings.index') }}">{{ __('messages.my_bookings') }}</a>
+    <a href="{{ route('profile') }}">{{ __('messages.profile') }}</a>
+
+    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
+        @csrf
+        <button type="submit" class="nav-button">
+            Logout
+        </button>
+    </form>
+@else
         <a href="{{ route('login') }}">{{ __('messages.login') }}</a>
         <a href="{{ route('register') }}">{{ __('messages.register') }}</a>
     @endauth

@@ -38,6 +38,10 @@ Route::get('/trainers', [TrainerController::class, 'index'])->name('trainers.ind
 
 
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [UserController::class, 'profile'])
+        ->name('dashboard');
+
     Route::get('/profile', [UserController::class, 'profile'])
         ->name('profile');
 
@@ -50,8 +54,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/bookings', [BookingController::class, 'store'])
         ->name('bookings.store');
 
-    Route::delete('/bookings/{id}', [BookingController::class, 'destroy'])
+       Route::delete('/bookings/{id}', [BookingController::class, 'destroy'])
         ->name('bookings.destroy');
+
+    Route::post('/logout', function () {
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('home');
+    })->name('logout');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

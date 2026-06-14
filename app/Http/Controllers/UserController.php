@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function profile(Request $request)
-    {
-        return response()->json([
-            'user' => $request->user()->load('role'),
-        ]);
-    }
+     public function profile()
+{
+    return view('profile', [
+        'user' => auth()->user()
+    ]);
+}
 
     public function updateProfile(Request $request)
     {

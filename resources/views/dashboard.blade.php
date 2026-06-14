@@ -1,18 +1,107 @@
-<x-layouts::app :title="__('Dashboard')">
-    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
-            </div>
-            <div class="relative aspect-video overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-                <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+@extends('layouts.sport')
+
+@section('content')
+<div class="container py-4">
+
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="row g-3 mb-5">
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['users'] }}</h3>
+                    <p>Users</p>
+                </div>
             </div>
         </div>
-        <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-            <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20" />
+
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['trainers'] }}</h3>
+                    <p>Trainers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['categories'] }}</h3>
+                    <p>Categories</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['schedules'] }}</h3>
+                    <p>Schedules</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['classes'] }}</h3>
+                    <p>Classes</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ $statistics['bookings'] }}</h3>
+                    <p>Bookings</p>
+                </div>
+            </div>
         </div>
     </div>
-</x-layouts::app>
+
+    <h3>Latest Users</h3>
+
+    <table class="table table-bordered mb-5">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($latestUsers as $user)
+                <tr>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->role->name ?? 'No Role' }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <h3>Latest Bookings</h3>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Class</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($latestBookings as $booking)
+                <tr>
+                    <td>{{ $booking->user->name ?? '-' }}</td>
+                    <td>{{ $booking->classSession->title ?? '-' }}</td>
+                    <td>{{ ucfirst($booking->status) }}</td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+</div>
+@endsection

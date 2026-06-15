@@ -278,6 +278,7 @@
         @auth
             @php
                 $isAdmin = auth()->user()->role && auth()->user()->role->name === 'admin';
+                $isTrainer = auth()->user()->role && auth()->user()->role->name === 'trainer';
             @endphp
 
             <a href="{{ route('home') }}">{{ __('messages.home') }}</a>
@@ -289,6 +290,11 @@
                 <a href="/admin/schedules">Schedules</a>
                 <a href="/admin/users">Users</a>
                 <a href="/bookings">Bookings</a>
+            @elseif($isTrainer)
+                <a href="{{ route('trainer.dashboard') }}">Trainer Panel</a>
+                <a href="{{ route('trainer.classes') }}">My Classes</a>
+                <a href="{{ route('classes.index') }}">{{ __('messages.classes') }}</a>
+                <a href="{{ route('trainers.index') }}">{{ __('messages.trainers') }}</a>
             @else
                 <a href="{{ route('classes.index') }}">{{ __('messages.classes') }}</a>
                 <a href="{{ route('trainers.index') }}">{{ __('messages.trainers') }}</a>

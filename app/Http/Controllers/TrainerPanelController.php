@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClassSession;
-use App\Models\Trainer;
 use Illuminate\Http\Request;
 
 class TrainerPanelController extends Controller
 {
-    private function currentTrainer()
-    {
-        return Trainer::where('user_id', auth()->id())->firstOrFail();
-    }
-
     public function dashboard()
     {
-        $trainer = $this->currentTrainer();
+        $trainer = auth()->user()->trainer;
+
+        if (! $trainer) {
+            return redirect()->route('profile')->with('error', 'Trainer profile is not connected to this user.');
+        }
 
         $classesCount = $trainer->classSessions()->count();
 
@@ -24,7 +22,11 @@ class TrainerPanelController extends Controller
 
     public function classes()
     {
-        $trainer = $this->currentTrainer();
+        $trainer = auth()->user()->trainer;
+
+        if (! $trainer) {
+            return redirect()->route('profile')->with('error', 'Trainer profile is not connected to this user.');
+        }
 
         $classes = $trainer->classSessions()
             ->with(['category', 'schedule', 'bookings.user'])
@@ -35,7 +37,11 @@ class TrainerPanelController extends Controller
 
     public function show($id)
     {
-        $trainer = $this->currentTrainer();
+        $trainer = auth()->user()->trainer;
+
+        if (! $trainer) {
+            return redirect()->route('profile')->with('error', 'Trainer profile is not connected to this user.');
+        }
 
         $class = ClassSession::with(['category', 'schedule', 'bookings.user'])
             ->where('trainer_id', $trainer->id)
@@ -46,7 +52,11 @@ class TrainerPanelController extends Controller
 
     public function edit($id)
     {
-        $trainer = $this->currentTrainer();
+        $trainer = auth()->user()->trainer;
+
+        if (! $trainer) {
+            return redirect()->route('profile')->with('error', 'Trainer profile is not connected to this user.');
+        }
 
         $class = ClassSession::where('trainer_id', $trainer->id)
             ->findOrFail($id);
@@ -56,7 +66,11 @@ class TrainerPanelController extends Controller
 
     public function update(Request $request, $id)
     {
-        $trainer = $this->currentTrainer();
+        $trainer = auth()->user()->trainer;
+
+        if (! $trainer) {
+            return redirect()->route('profile')->with('error', 'Trainer profile is not connected to this user.');
+        }
 
         $class = ClassSession::where('trainer_id', $trainer->id)
             ->findOrFail($id);
@@ -68,6 +82,6 @@ class TrainerPanelController extends Controller
 
         $class->update($validated);
 
-        return redirect('/trainer/classes')->with('success', 'Class updated successfully.');
+        return redirect()->route('trainer.classes')->with('success', 'Class updated successfully.');
     }
 }

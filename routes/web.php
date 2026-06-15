@@ -7,6 +7,7 @@ use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\TrainerPanelController;
 use App\Models\ClassSession;
 use App\Models\Trainer;
 use App\Models\Booking;
@@ -48,6 +49,14 @@ Route::middleware(['auth'])->group(function () {
 
         return redirect()->route('home');
     })->name('logout');
+});
+
+Route::middleware(['auth', 'role:trainer'])->group(function () {
+    Route::get('/trainer', [TrainerPanelController::class, 'dashboard'])->name('trainer.dashboard');
+    Route::get('/trainer/classes', [TrainerPanelController::class, 'classes'])->name('trainer.classes');
+    Route::get('/trainer/classes/{id}', [TrainerPanelController::class, 'show'])->name('trainer.classes.show');
+    Route::get('/trainer/classes/{id}/edit', [TrainerPanelController::class, 'edit'])->name('trainer.classes.edit');
+    Route::put('/trainer/classes/{id}', [TrainerPanelController::class, 'update'])->name('trainer.classes.update');
 });
 
 Route::middleware(['auth', 'role:admin'])->group(function () {

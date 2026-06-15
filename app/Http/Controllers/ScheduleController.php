@@ -9,16 +9,16 @@ class ScheduleController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'schedules' => Schedule::all(),
-        ]);
+        $schedules = Schedule::orderBy('class_date', 'asc')
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        return view('admin.schedules.index', compact('schedules'));
     }
 
     public function create()
     {
-        return response()->json([
-            'message' => 'Create schedule form data',
-        ]);
+        return view('admin.schedules.create');
     }
 
     public function store(Request $request)
@@ -26,57 +26,45 @@ class ScheduleController extends Controller
         $validated = $request->validate([
             'class_date' => 'required|date',
             'start_time' => 'required',
-            'end_time' => 'required',
+            'end_time' => 'required|after:start_time',
             'place' => 'required|string|max:255',
             'available_places' => 'required|integer|min:1',
         ]);
 
-        $schedule = Schedule::create($validated);
+        Schedule::create($validated);
 
-        return response()->json([
-            'message' => 'Schedule created successfully.',
-            'schedule' => $schedule,
-        ], 201);
+        return redirect('/admin/schedules')->with('success', 'Schedule created successfully.');
     }
 
     public function show(Schedule $schedule)
     {
-        return response()->json([
-            'schedule' => $schedule,
-        ]);
+        return redirect('/admin/schedules');
     }
 
     public function edit(Schedule $schedule)
     {
-        return response()->json([
-            'schedule' => $schedule,
-        ]);
+        return view('admin.schedules.edit', compact('schedule'));
     }
 
     public function update(Request $request, Schedule $schedule)
     {
         $validated = $request->validate([
-            'class_date' => 'sometimes|date',
-            'start_time' => 'sometimes',
-            'end_time' => 'sometimes',
-            'place' => 'sometimes|string|max:255',
-            'available_places' => 'sometimes|integer|min:1',
+            'class_date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required|after:start_time',
+            'place' => 'required|string|max:255',
+            'available_places' => 'required|integer|min:1',
         ]);
 
         $schedule->update($validated);
 
-        return response()->json([
-            'message' => 'Schedule updated successfully.',
-            'schedule' => $schedule,
-        ]);
+        return redirect('/admin/schedules')->with('success', 'Schedule updated successfully.');
     }
 
     public function destroy(Schedule $schedule)
     {
         $schedule->delete();
 
-        return response()->json([
-            'message' => 'Schedule deleted successfully.',
-        ]);
+        return redirect('/admin/schedules')->with('success', 'Schedule deleted successfully.');
     }
 }

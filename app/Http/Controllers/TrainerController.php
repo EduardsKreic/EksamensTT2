@@ -2,55 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Booking;
-use App\Models\ClassSession;
 use App\Models\Trainer;
 use Illuminate\Http\Request;
 
 class TrainerController extends Controller
 {
-   public function index()
-{
-    $trainers = Trainer::all();
-
-    return view('trainers.index', compact('trainers'));
-}
-
-   public function show($id)
-{
-    $trainer = Trainer::with([
-        'classSessions.category',
-        'classSessions.schedule',
-    ])->findOrFail($id);
-
-    return view('trainers.show', compact('trainer'));
-}
-
-    public function classes($trainerId)
+    public function index()
     {
-        $classes = ClassSession::with([
-            'category',
-            'schedule',
-        ])
-        ->where('trainer_id', $trainerId)
-        ->get();
+        $trainers = Trainer::all();
 
-        return response()->json([
-            'message' => 'Trainer classes',
-            'classes' => $classes,
-        ]);
+        return view('trainers.index', compact('trainers'));
     }
 
-    public function participants($classId)
+    public function adminIndex()
     {
-        $participants = Booking::with('user')
-            ->where('class_session_id', $classId)
-            ->where('status', 'active')
-            ->get();
+        $trainers = Trainer::all();
 
-        return response()->json([
-            'message' => 'Class participants',
-            'participants' => $participants,
+        return view('admin.trainers.index', compact('trainers'));
+    }
+
+    public function create()
+    {
+        return view('admin.trainers.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'specialization' => 'required|string|max:255',
+            'description' => 'nullable|string',
         ]);
+
+        Trainer::create($validated);
+
+        return redirect('/admin/trainers')
+            ->with('success', 'Trainer created successfully.');
+    }
+
+    public function edit($id)
+    {
+        $trainer = Trainer::findOrFail($id);
+
+        return view('admin.trainers.edit', compact('trainer'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $trainer = Trainer::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'specialization' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $trainer->update($validated);
+
+        return redirect('/admin/trainers')
+            ->with('success', 'Trainer updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $trainer = Trainer::findOrFail($id);
+        $trainer->delete();
+
+        return redirect('/admin/trainers')
+            ->with('success', 'Trainer deleted successfully.');
     }
 }

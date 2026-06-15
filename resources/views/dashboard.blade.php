@@ -3,105 +3,91 @@
 @section('content')
 <div class="container py-4">
 
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <h1 class="mb-4">Admin Panel</h1>
 
-    <div class="row g-3 mb-5">
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['users'] }}</h3>
-                    <p>Users</p>
-                </div>
-            </div>
+    <div class="grid">
+
+        <div class="card">
+            <h2>Classes</h2>
+            <p>Add, edit and delete sport classes.</p>
+            <a href="/admin/classes" class="btn">Manage Classes</a>
         </div>
 
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['trainers'] }}</h3>
-                    <p>Trainers</p>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Trainers</h2>
+            <p>Manage trainers and their specializations.</p>
+            <a href="/admin/trainers" class="btn">Manage Trainers</a>
         </div>
 
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['categories'] }}</h3>
-                    <p>Categories</p>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Schedules</h2>
+            <p>Manage class dates, times and places.</p>
+            <a href="/admin/schedules" class="btn">Manage Schedules</a>
         </div>
 
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['schedules'] }}</h3>
-                    <p>Schedules</p>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Users</h2>
+            <p>Manage users, roles, block and unblock accounts.</p>
+            <a href="/admin/users" class="btn">Manage Users</a>
         </div>
 
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['classes'] }}</h3>
-                    <p>Classes</p>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Bookings</h2>
+            <p>View all bookings in the system.</p>
+            <a href="/bookings" class="btn">View Bookings</a>
         </div>
 
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h3>{{ $statistics['bookings'] }}</h3>
-                    <p>Bookings</p>
-                </div>
-            </div>
+        <div class="card">
+            <h2>Statistics</h2>
+            <p>Total users: {{ $statistics['users'] }}</p>
+            <p>Total trainers: {{ $statistics['trainers'] }}</p>
+            <p>Total categories: {{ $statistics['categories'] }}</p>
+            <p>Total schedules: {{ $statistics['schedules'] }}</p>
+            <p>Total classes: {{ $statistics['classes'] }}</p>
+            <p>Total bookings: {{ $statistics['bookings'] }}</p>
         </div>
+
     </div>
 
-    <h3>Latest Users</h3>
+    <div class="grid" style="margin-top: 24px;">
 
-    <table class="table table-bordered mb-5">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($latestUsers as $user)
-                <tr>
-                    <td>{{ $user->name }}</td>
-                    <td>{{ $user->email }}</td>
-                    <td>{{ $user->role->name ?? 'No Role' }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="card">
+            <h2>Latest Users</h2>
 
-    <h3>Latest Bookings</h3>
+            @forelse($latestUsers as $user)
+                <p>
+                    {{ $user->name }}
+                    ({{ $user->email }})
+                    — {{ $user->role->name ?? 'No role' }}
+                </p>
+            @empty
+                <p>No users found.</p>
+            @endforelse
+        </div>
 
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Class</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($latestBookings as $booking)
-                <tr>
-                    <td>{{ $booking->user->name ?? '-' }}</td>
-                    <td>{{ $booking->classSession->title ?? '-' }}</td>
-                    <td>{{ ucfirst($booking->status) }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <div class="card">
+            <h2>Latest Bookings</h2>
+
+            @forelse($latestBookings as $booking)
+                <p>
+                    {{ $booking->user->name ?? '-' }}
+                    →
+                    {{ $booking->classSession->title ?? '-' }}
+                    —
+                    {{ ucfirst($booking->status) }}
+                </p>
+            @empty
+                <p>No bookings found.</p>
+            @endforelse
+        </div>
+
+        <div class="card">
+            <h2>Admin Requirements</h2>
+            <p>Administrator can manage classes, trainers, users and schedules.</p>
+            <p>Administrator can block and unblock users.</p>
+        </div>
+
+    </div>
 
 </div>
 @endsection

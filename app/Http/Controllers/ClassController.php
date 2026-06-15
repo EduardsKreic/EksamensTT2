@@ -10,28 +10,27 @@ use Illuminate\Http\Request;
 
 class ClassController extends Controller
 {
+    public function index(Request $request)
+    {
+        $query = ClassSession::with([
+            'trainer',
+            'category',
+            'schedule',
+        ]);
 
-public function index(Request $request)
-{
-    $query = ClassSession::with([
-        'trainer',
-        'category',
-        'schedule',
-    ]);
+        if ($request->filled('category_id')) {
+            $query->where('category_id', $request->category_id);
+        }
 
-    if ($request->filled('category_id')) {
-        $query->where('category_id', $request->category_id);
-    }
+        if ($request->filled('trainer_id')) {
+            $query->where('trainer_id', $request->trainer_id);
+        }
 
-    if ($request->filled('trainer_id')) {
-        $query->where('trainer_id', $request->trainer_id);
-    }
-
-    if ($request->filled('date')) {
-        $query->whereHas('schedule', function ($scheduleQuery) use ($request) {
-            $scheduleQuery->where('class_date', $request->date);
-        });
-    }
+        if ($request->filled('date')) {
+            $query->whereHas('schedule', function ($scheduleQuery) use ($request) {
+                $scheduleQuery->where('class_date', $request->date);
+            });
+        }
 
         $classes = $query->get();
         $categories = Category::all();
@@ -39,31 +38,45 @@ public function index(Request $request)
 
         if ($request->ajax()) {
             return view('classes.partials.list', compact('classes'))->render();
-}
+        }
 
-return view('classes.index', compact('classes', 'categories', 'trainers'));
-}
+        return view('classes.index', compact('classes', 'categories', 'trainers'));
+    }
 
-public function show($id)
-{
-    $class = ClassSession::with([
-        'trainer',
-        'category',
-        'schedule',
-        'bookings.user',
-    ])->findOrFail($id);
+    public function adminIndex()
+    {
+        $classes = ClassSession::with([
+            'trainer',
+            'category',
+            'schedule',
+        ])->get();
 
-    return view('classes.show', compact('class'));
-}
+        return view('admin.classes.index', compact('classes'));
+    }
+
+    public function show($id)
+    {
+        $class = ClassSession::with([
+            'trainer',
+            'category',
+            'schedule',
+            'bookings.user',
+        ])->findOrFail($id);
+
+        return view('classes.show', compact('class'));
+    }
 
     public function create()
     {
-        return response()->json([
-            'message' => 'Create class form data',
-            'trainers' => Trainer::all(),
-            'categories' => Category::all(),
-            'schedules' => Schedule::all(),
-        ]);
+        $trainers = Trainer::all();
+        $categories = Category::all();
+        $schedules = Schedule::all();
+
+        return view('admin.classes.create', compact(
+            'trainers',
+            'categories',
+            'schedules'
+        ));
     }
 
     public function store(Request $request)
@@ -76,58 +89,51 @@ public function show($id)
             'schedule_id' => 'required|exists:schedules,id',
         ]);
 
-        $classSession = ClassSession::create($validated);
+        ClassSession::create($validated);
 
-        return response()->json([
-            'message' => 'Class created successfully.',
-            'class' => $classSession,
-        ], 201);
+        return redirect('/admin/classes')
+            ->with('success', 'Class created successfully.');
     }
 
     public function edit($id)
     {
-        $classSession = ClassSession::with([
-            'trainer',
-            'category',
-            'schedule',
-        ])->findOrFail($id);
+        $class = ClassSession::findOrFail($id);
+        $trainers = Trainer::all();
+        $categories = Category::all();
+        $schedules = Schedule::all();
 
-        return response()->json([
-            'message' => 'Edit class form data',
-            'class' => $classSession,
-            'trainers' => Trainer::all(),
-            'categories' => Category::all(),
-            'schedules' => Schedule::all(),
-        ]);
+        return view('admin.classes.edit', compact(
+            'class',
+            'trainers',
+            'categories',
+            'schedules'
+        ));
     }
 
     public function update(Request $request, $id)
     {
-        $classSession = ClassSession::findOrFail($id);
+        $class = ClassSession::findOrFail($id);
 
         $validated = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'trainer_id' => 'sometimes|required|exists:trainers,id',
-            'category_id' => 'sometimes|required|exists:categories,id',
-            'schedule_id' => 'sometimes|required|exists:schedules,id',
+            'trainer_id' => 'required|exists:trainers,id',
+            'category_id' => 'required|exists:categories,id',
+            'schedule_id' => 'required|exists:schedules,id',
         ]);
 
-        $classSession->update($validated);
+        $class->update($validated);
 
-        return response()->json([
-            'message' => 'Class updated successfully.',
-            'class' => $classSession,
-        ]);
+        return redirect('/admin/classes')
+            ->with('success', 'Class updated successfully.');
     }
 
     public function destroy($id)
     {
-        $classSession = ClassSession::findOrFail($id);
-        $classSession->delete();
+        $class = ClassSession::findOrFail($id);
+        $class->delete();
 
-        return response()->json([
-            'message' => 'Class deleted successfully.',
-        ]);
+        return redirect('/admin/classes')
+            ->with('success', 'Class deleted successfully.');
     }
 }

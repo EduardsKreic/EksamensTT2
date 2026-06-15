@@ -22,20 +22,14 @@ class AdminController extends Controller
             'bookings' => Booking::count(),
         ];
 
-        $latestUsers = User::with('role')
-            ->latest()
-            ->take(5)
-            ->get();
+        $latestUsers = User::with('role')->latest()->take(5)->get();
 
         $latestBookings = Booking::with([
             'user',
             'classSession.trainer',
             'classSession.category',
             'classSession.schedule',
-        ])
-            ->latest()
-            ->take(5)
-            ->get();
+        ])->latest()->take(5)->get();
 
         return view('admin.dashboard', compact(
             'statistics',
@@ -54,24 +48,16 @@ class AdminController extends Controller
     public function blockUser($id)
     {
         $user = User::findOrFail($id);
+        $user->update(['is_blocked' => true]);
 
-        $user->update([
-            'is_blocked' => true,
-        ]);
-
-        return redirect('/admin/users')
-            ->with('success', 'User blocked successfully.');
+        return redirect('/admin/users')->with('success', 'User blocked successfully.');
     }
 
     public function unblockUser($id)
     {
         $user = User::findOrFail($id);
+        $user->update(['is_blocked' => false]);
 
-        $user->update([
-            'is_blocked' => false,
-        ]);
-
-        return redirect('/admin/users')
-            ->with('success', 'User unblocked successfully.');
+        return redirect('/admin/users')->with('success', 'User unblocked successfully.');
     }
 }

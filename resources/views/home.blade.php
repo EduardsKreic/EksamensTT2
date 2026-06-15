@@ -23,7 +23,7 @@
     </div>
 </section>
 
-<<section class="stats-grid">
+<section class="stats-grid">
     <div class="stat-card">
         <h2>{{ $classesCount }}</h2>
         <p>Classes</p>
@@ -39,4 +39,30 @@
         <p>Bookings</p>
     </div>
 </section>
+
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .stat-card h2 {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .stat-card p {
+        margin: 0;
+    }
+</style>
 @endsection

@@ -68,6 +68,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $trainer1 = Trainer::create([
+            'user_id' => $trainerUser->id,
             'name' => 'Anna Ozola',
             'specialization' => 'Yoga',
             'description' => 'Certified yoga instructor with 5 years of experience.',
